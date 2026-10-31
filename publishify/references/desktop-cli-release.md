@@ -126,14 +126,14 @@ In the trusted macOS release job, before building publishable assets:
 
 If Apple credentials are unavailable, continue only independent platform builds if repository policy allows. Mark macOS release as blocked and do not claim the release is complete or publish an unsigned macOS artifact.
 
-## Homebrew and Buzz.app
+## Package-manager distribution
 
-Homebrew package update and app self-update are separate mechanisms. Inspect the current tap repository and Buzz.app implementation to learn which package types, architectures, and OS targets Buzz can install. Never assume a formula or cask automatically means Buzz supports that artifact.
+Package-manager updates and app self-updates are separate mechanisms. Inspect the configured package repository and consuming installer implementation to learn which package types, architectures, and OS targets it supports. Never infer installer support from a formula, cask, or release asset alone.
 
 - **CLI**: normally represent as a formula with platform-specific URLs/bottles only where supported. Validate formula against the tap's conventions and artifact matrix.
-- **GUI on macOS**: a cask may install an app bundle from a supported archive/DMG/PKG. Match Buzz's cask support and expected app path.
-- **Linux**: Homebrew runs on Linux; formulas commonly serve CLI tools. Use casks for GUI only when both the tap and Buzz support that Linux cask artifact/install behavior. Otherwise expose the GitHub Release package through a supported Linux installation path.
-- **Windows**: Homebrew runs under WSL 2, not as native Windows package management. Add Windows to Buzz's Homebrew flow only if Buzz explicitly supports WSL/Homebrew integration and the package has been installed and verified there. Otherwise publish the Windows artifact on GitHub Releases and use Buzz's supported Windows installer source, if one exists.
-- For `luban-homebrew`, target `develop` unless the user specifies another base branch. If the target branch is missing, stop and ask whether to create it from the verified tap default branch; never silently fall back to `main`. A GitHub Actions job in the release workflow opens each tap PR automatically; do not leave it to a human. In that job, verify release URL is public and immutable, checksum matches downloaded asset, formula/cask syntax passes tap checks, and PR base matches the requested target. Never put credentials or mutable local paths in a formula/cask.
+- **GUI on macOS**: a cask may install an app bundle from a supported archive/DMG/PKG. Match the selected package manager's documented behavior and expected app path.
+- **Linux**: Homebrew runs on Linux; formulas commonly serve CLI tools. Use casks for GUI only when both the package repository and consuming installer support that Linux cask behavior. Otherwise expose the GitHub Release package through a supported Linux installation path.
+- **Windows**: Homebrew runs under WSL 2, not as native Windows package management. Add Windows to a Homebrew flow only when the consuming installer explicitly supports WSL/Homebrew and the package has been installed and verified there. Otherwise publish the Windows artifact on GitHub Releases and use a supported Windows installer source.
+- Follow the configured package repository and base branch. If the target branch is missing, report it; never silently fall back. A release workflow may open a package PR only after verifying the public immutable asset URL, matching checksum, package syntax, requested PR base, and destination-scoped token. Never put credentials or mutable local paths in a package definition.
 
 Homebrew platform guidance: [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux), [Adding Software to Homebrew](https://docs.brew.sh/Adding-Software-to-Homebrew).

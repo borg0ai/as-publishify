@@ -25,7 +25,7 @@ Load when the repo has `wails.json` or a Wails v3 `Taskfile` build. Rules below 
 
 ## Distribution
 
-- macOS app: cask in `luban-homebrew`, one URL and checksum per architecture, opened after the release is public and the exact asset list is verified.
+- macOS app: use a configured cask with one verified URL and checksum per architecture; open its PR only after release assets are public and verified.
 
 ## Traps
 

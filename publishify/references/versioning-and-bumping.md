@@ -225,7 +225,7 @@ With the tag created in the publish job (section 7), a failed build leaves no ta
 2. Merged version PR → promotion PR.
 3. `main` promotion → tag, release, assets, signatures/notarization.
 4. Published release → merged version PR relabelled `autorelease: tagged`; the next `develop` push opens or updates the next version PR.
-5. Verified assets → automated tap PR (`desktop-cli-release.md`).
+5. Verified assets → automated package-manager PR when configured (`desktop-cli-release.md`).
 
 ## 7. Build one release workflow
 
@@ -237,8 +237,10 @@ Trigger: push to `main`, plus `workflow_dispatch` with an existing tag. Jobs, in
 2. **prepare**: read the version from source, run the repo's version-sync check, compute `v<version>`. Stop with no error if that tag already exists.
 3. **build-<product>**: one job or matrix per product (CLI archives, app installers), from its profile.
 4. **verify-assets**: exact expected asset names, signatures, notarization, checksums.
-5. **publish**: create the tag and GitHub Release at the verified commit, only now. A failed build leaves no tag.
+5. **publish**: with `contents: write` and the job's `GITHUB_TOKEN`, run `gh release create "$TAG" --target "$SHA" ...`; the release API creates the tag at the verified commit, only now, and needs no git identity. A failed build leaves no tag.
 6. **bookkeeping**: version-tool follow-up (Release Please: relabel merged version PRs `autorelease: pending` → `autorelease: tagged`, push events only, section 5).
-7. **homebrew**: for any macOS asset, open the PR against `luban-homebrew` (base `develop`; formula for a CLI, cask for a macOS app) after the release is public and verified. Linux Homebrew is not covered yet.
+7. **package-manager** (when configured): after the release is public and verified, update the configured package definition and open a PR to its configured target branch. Verify package type, asset URL, checksum, destination, and token scope from repository configuration; do not assume a tap or branch.
+
+Git identity: runners have no committer identity. Any step that creates a git object (`git tag -a`, `git commit`, merge, cherry-pick) fails with "Committer identity unknown" unless the job first sets `git config user.name "github-actions[bot]"` and `user.email "41898282+github-actions[bot]@users.noreply.github.com"` in the checkout. Lightweight `git tag` needs none, but prefer `gh release create --target` for tags. Package-manager jobs that commit need this identity. Pushing needs credentials too: use the checkout token or `gh auth setup-git` with a token that has the required write scope.
 
 Rules: jobs 6 and 7 are idempotent and re-runnable alone. A dispatch on an existing tag rebuilds that tag's source, never moves the tag, and never flips labels for a newer version PR. Pin actions to commit SHAs, use `RELEASE_BOT_TOKEN`, add `--repo "$GITHUB_REPOSITORY"` to every `gh` call, and give each job the least `permissions`. Before relying on a release-created tag, read `gh api repos/{owner}/{repo}/rulesets` for rules targeting tags; if `v*` is protected, report it and ask the owner to allow the release job.

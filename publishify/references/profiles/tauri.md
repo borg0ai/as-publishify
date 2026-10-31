@@ -30,7 +30,7 @@ Keep these in sync through the version tool's `extra-files`, and add a repo scri
 
 ## Distribution
 
-- macOS app: cask in `luban-homebrew` pointing at the verified DMG or archive. Rust CLI: formula.
+- macOS app: use a configured cask only when its installer supports the verified DMG or archive. Rust CLI: use a configured formula when present.
 
 ## Traps
 
