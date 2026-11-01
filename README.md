@@ -1,6 +1,6 @@
 # Publishify
 
-Publishify helps agents design and review GitHub Actions CI/CD for repositories that ship CLI tools or desktop apps. It covers pull request gates, branch promotion, build matrices, signing, GitHub Releases, auto-updaters, and configured package-manager distribution.
+Publishify helps agents design and review GitHub Actions CI/CD for repositories that ship CLI tools or desktop apps. It covers three workflow modes: `auto` for full feature-to-development-to-production promotion and release, `half` for feature pull requests plus a manually pushed release tag, and `manual` for feature pull request checks only. It also covers build matrices, signing, GitHub Releases, auto-updaters, and configured package-manager distribution.
 
 ## Install
 
