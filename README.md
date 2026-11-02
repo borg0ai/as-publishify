@@ -7,10 +7,10 @@ Publishify helps agents design and review GitHub Actions CI/CD for repositories 
 Install the skill for Codex with:
 
 ```sh
-npx skills add borg0ai/publishify --skill publishify --agent codex --copy --yes
+npx skills add borg0ai/as-publishify --skill publishify --agent codex --copy --yes
 ```
 
-For local development, run the command from this repository and replace `borg0ai/publishify` with `.`.
+For local development, run the command from this repository and replace `borg0ai/as-publishify` with `.`.
 
 ## Use
 
